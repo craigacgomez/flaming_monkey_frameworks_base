@@ -447,6 +447,11 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected abstract WindowManager.LayoutParams getSearchLayoutParams(
             LayoutParams layoutParams);
 
+    private int getNavigationBarPosition(Context context) {
+        return Settings.Global.getInt(context.getContentResolver(),
+                    Settings.Global.NAV_BAR_POSITION, 0);
+    }
+
     protected void updateSearchPanel() {
         // Search Panel
         boolean visible = false;
@@ -457,8 +462,21 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         // Provide SearchPanel with a temporary parent to allow layout params to work.
         LinearLayout tmpRoot = new LinearLayout(mContext);
-        mSearchPanelView = (SearchPanelView) LayoutInflater.from(mContext).inflate(
+        mSearchPanelView = null;
+        if(getNavigationBarPosition(mContext) == 1) {
+            mSearchPanelView =
+                (SearchPanelView) LayoutInflater.from(mContext).inflate(
+                 R.layout.status_bar_search_panel_left, tmpRoot, false);
+        } else if(getNavigationBarPosition(mContext) == 2) {
+            mSearchPanelView =
+                (SearchPanelView) LayoutInflater.from(mContext).inflate(
+                 R.layout.status_bar_search_panel_right, tmpRoot, false);
+        } else {
+            mSearchPanelView =
+                (SearchPanelView) LayoutInflater.from(mContext).inflate(
                  R.layout.status_bar_search_panel, tmpRoot, false);
+        }
+
         mSearchPanelView.setOnTouchListener(
                  new TouchOutsideListener(MSG_CLOSE_SEARCH_PANEL, mSearchPanelView));
         mSearchPanelView.setVisibility(View.GONE);

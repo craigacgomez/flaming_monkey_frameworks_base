@@ -5450,6 +5450,12 @@ public final class Settings {
         public static final String SELINUX_STATUS = "selinux_status";
 
         /**
+         * Navigation bar position
+         * @hide
+         */
+        public static final String NAV_BAR_POSITION = "nav_bar_position";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -5481,7 +5487,8 @@ public final class Settings {
             WIFI_NUM_OPEN_NETWORKS_KEPT,
             EMERGENCY_TONE,
             CALL_AUTO_RETRY,
-            DOCK_AUDIO_MEDIA_ENABLED
+            DOCK_AUDIO_MEDIA_ENABLED,
+            NAV_BAR_POSITION
         };
 
         // Populated lazily, guarded by class object:
