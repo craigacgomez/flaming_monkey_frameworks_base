@@ -2358,6 +2358,18 @@ public final class Settings {
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
 
         /**
+         * Whether to wake the screen with the volume keys, the value is boolean.
+         * @hide
+         */
+        public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
+
+        /**
+         * Whether or not volume button music controls should be enabled to seek media tracks
+         * @hide
+         */
+        public static final String VOLBTN_MUSIC_CONTROLS = "volbtn_music_controls";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -2428,7 +2440,9 @@ public final class Settings {
             QUIET_HOURS_END,
             QUIET_HOURS_MUTE,
             QUIET_HOURS_STILL,
-            QUIET_HOURS_DIM
+            QUIET_HOURS_DIM,
+            VOLUME_WAKE_SCREEN,
+            VOLBTN_MUSIC_CONTROLS
         };
 
         // Settings moved to Settings.Secure
@@ -4135,6 +4149,12 @@ public final class Settings {
          * @hide
          */
          public static final String DEVICE_HOSTNAME = "device_hostname";
+
+         /**
+         * Whether to allow killing of the foreground app by long-pressing the Back button
+         * @hide
+         */
+        public static final String KILL_APP_LONGPRESS_BACK = "kill_app_longpress_back";
 
         /**
          * This are the settings to be backed up.
