@@ -32,6 +32,7 @@ import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -116,16 +117,30 @@ public abstract class KeyguardActivityLauncher {
     }
 
     public void launchWidgetPicker(int appWidgetId) {
+        boolean allWidgets = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_ALL_WIDGETS, 0, UserHandle.USER_CURRENT) == 1;
+
         Intent pickIntent = new Intent(AppWidgetManager.ACTION_KEYGUARD_APPWIDGET_PICK);
 
         pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         pickIntent.putExtra(AppWidgetManager.EXTRA_CUSTOM_SORT, false);
-        pickIntent.putExtra(AppWidgetManager.EXTRA_CATEGORY_FILTER,
+        if (allWidgets) {
+            pickIntent.putExtra(AppWidgetManager.EXTRA_CATEGORY_FILTER,
+                AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD | AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN);
+        } else {
+            pickIntent.putExtra(AppWidgetManager.EXTRA_CATEGORY_FILTER,
                 AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD);
+        }
 
         Bundle options = new Bundle();
-        options.putInt(AppWidgetManager.OPTION_APPWIDGET_HOST_CATEGORY,
+        if (allWidgets) {
+            options.putInt(AppWidgetManager.OPTION_APPWIDGET_HOST_CATEGORY,
+                AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD | AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN);
+        }
+        else {
+            options.putInt(AppWidgetManager.OPTION_APPWIDGET_HOST_CATEGORY,
                 AppWidgetProviderInfo.WIDGET_CATEGORY_KEYGUARD);
+        }
         pickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_OPTIONS, options);
         pickIntent.addFlags(
                 Intent.FLAG_ACTIVITY_NEW_TASK
