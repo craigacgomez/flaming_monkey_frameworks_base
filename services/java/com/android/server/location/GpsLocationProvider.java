@@ -499,7 +499,7 @@ public class GpsLocationProvider implements LocationProviderInterface {
                 LocationManager locManager =
                         (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
                 locManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                        0, 0, new NetworkLocationListener(), mHandler.getLooper());                
+                        0, 0, new NetworkLocationListener(), mHandler.getLooper());
             }
         });
     }
@@ -591,6 +591,8 @@ public class GpsLocationProvider implements LocationProviderInterface {
                 if (DEBUG) Log.d(TAG, "call native_agps_data_conn_failed");
                 mAGpsApn = null;
                 mAGpsDataConnectionState = AGPS_DATA_CONNECTION_CLOSED;
+                mConnMgr.stopUsingNetworkFeature(
+                        ConnectivityManager.TYPE_MOBILE, Phone.FEATURE_ENABLE_SUPL);
                 native_agps_data_conn_failed();
             }
         }
