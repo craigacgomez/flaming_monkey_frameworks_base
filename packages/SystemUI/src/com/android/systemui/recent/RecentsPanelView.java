@@ -58,6 +58,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.systemui.R;
 import com.android.systemui.statusbar.BaseStatusBar;
@@ -65,6 +66,8 @@ import com.android.systemui.statusbar.phone.PhoneStatusBar;
 import com.android.systemui.statusbar.tablet.StatusBarPanel;
 import com.android.systemui.statusbar.tablet.TabletStatusBar;
 
+import java.io.OutputStreamWriter;
+import java.lang.Runtime;
 import java.util.ArrayList;
 
 public class RecentsPanelView extends FrameLayout implements OnItemClickListener, RecentsCallback,
@@ -353,7 +356,6 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             mRecentsNoApps.setAlpha(1f);
             mRecentsNoApps.setVisibility(noApps ? View.VISIBLE : View.INVISIBLE);
             mClearRecents.setVisibility(noApps ? View.GONE : View.VISIBLE);
-
             onAnimationEnd(null);
             setFocusable(true);
             setFocusableInTouchMode(true);
@@ -473,6 +475,30 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                 @Override
                 public void onClick(View v) {
                     mRecentsContainer.removeAllViewsInLayout();
+                }
+            });
+            mClearRecents.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mRecentsContainer.removeAllViewsInLayout();
+                    try {
+                        ProcessBuilder pb = new ProcessBuilder("su", "-c", "/system/bin/sh");
+                        Process p = pb.start();
+                        OutputStreamWriter osw = new OutputStreamWriter(p.getOutputStream());
+                        osw.write("sync" + "\n" + "echo 3 > /proc/sys/vm/drop_caches" + "\n");
+                        osw.write("\nexit\n");
+                        osw.flush();
+                        osw.close();
+                        int rc = p.waitFor();
+                        if (rc != 0) {
+                            Log.e(TAG, "Flush caches failed!");
+                        } else {
+                            Toast.makeText(mContext, "VM caches dropped", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Flush caches failed!", e);
+                    }
+                    return true;
                 }
             });
         }
